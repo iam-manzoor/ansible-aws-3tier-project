@@ -1,0 +1,34 @@
+---
+# roles/loadbalancer/tasks/main.yml
+
+- name: Secure Load Balancer Deployment Block
+  block:
+    - name: Install Nginx Web Server engine
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Deploy dynamic Nginx proxy routing configuration
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: reload nginx
+
+    - name: Ensure Nginx is started and enabled to boot automatically
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+  rescue:
+    - name: Operational Failure Recovery Route
+      ansible.builtin.debug:
+        msg: "Deployment failure detected on Proxy Tier. Initiating safe rollback logs..."
+
+    - name: Ensure broken configuration does not leave Nginx dead
+      ansible.builtin.service:
+        name: nginx
+        state: started

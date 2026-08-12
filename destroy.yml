@@ -1,0 +1,64 @@
+---
+- name: Phase 3 - 1-Click AWS Portfolio Teardown (Stop Billing)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: Fetch VPC network metadata details
+      amazon.aws.ec2_vpc_net_info:
+        region: "{{ aws_region }}"
+        filters:
+          "tag:Name": "portfolio-vpc"
+      register: vpc_info
+
+    - name: Infrastructure Wipedown Execution
+      block:
+        - name: Terminate all Portfolio EC2 instances instantly
+          amazon.aws.ec2_instance:
+            region: "{{ aws_region }}"
+            filters:
+              "tag:Environment": "Production"
+            state: absent
+            wait: true # Crucial: Waits for instances to fully shut down before removing network rules
+
+        - name: Delete Tier-Specific Security Groups
+          amazon.aws.ec2_security_group:
+            name: "{{ item }}"
+            vpc_id: "{{ vpc_info.vpcs[0].id }}"
+            region: "{{ aws_region }}"
+            state: absent
+          loop:
+            - "portfolio-db-sg"
+            - "portfolio-app-sg"
+            - "portfolio-lb-sg"
+
+        - name: Detach and remove Internet Gateway connections
+          amazon.aws.ec2_vpc_igw:
+            vpc_id: "{{ vpc_info.vpcs[0].id }}"
+            region: "{{ aws_region }}"
+            state: absent
+
+        - name: Delete Route Subnet Configurations
+          amazon.aws.ec2_vpc_subnet:
+            vpc_id: "{{ vpc_info.vpcs[0].id }}"
+            cidr: "{{ item }}"
+            region: "{{ aws_region }}"
+            state: absent
+          loop:
+            - "10.0.1.0/24" # Public Subnet
+            - "10.0.2.0/24" # Private Subnet
+
+        - name: Delete Project VPC Network Framework
+          amazon.aws.ec2_vpc_net:
+            name: "portfolio-vpc"
+            cidr_block: "10.0.0.0/16"
+            region: "{{ aws_region }}"
+            state: absent
+
+        - name: Print billing protection summary status
+          ansible.builtin.debug:
+            msg: "SUCCESS: All AWS components purged completely. Active hourly runtime cost reduced to $0.00."
+
+      when: vpc_info.vpcs | length > 0

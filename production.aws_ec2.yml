@@ -1,0 +1,19 @@
+---
+# inventory_aws.yml
+plugin: amazon.aws.aws_ec2
+regions:
+  - "us-east-1" # Must match your aws_region variable
+
+# 1. Connect using private IP addresses for servers hidden inside the private subnet
+hostnames:
+  - private-ip-address
+
+# 2. Automatically group servers by their "Tier" tag
+keyed_groups:
+  - key: tags.Tier
+    prefix: tier
+    separator: "_"
+
+# 3. Create a separate group specifically for your public-facing load balancer
+groups:
+  bastion_hosts: "'tag:Tier=loadbalancer' in tags.Tier"

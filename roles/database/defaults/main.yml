@@ -1,0 +1,5 @@
+---
+# roles/database/defaults/main.yml
+db_package: mariadb-server
+db_service: mariadb
+db_port: 3306

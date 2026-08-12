@@ -1,0 +1,30 @@
+---
+- name: Update all system packages to the latest version
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install core system utility dependencies via loops
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - git
+    - curl
+    - unzip
+    - tar
+    - vim
+    - htop
+  
+- name: Set a structured production system banner
+  ansible.builtin.copy:
+    dest: /etc/motd
+    content: |
+      ======================================================
+      WARNING: AUTHORISED PORTFOLIO PRODUCTION SYSTEM ONLY
+      All connections and activity are strictly monitored.
+      ======================================================
+    owner: root
+    group: root
+    mode: '0644'

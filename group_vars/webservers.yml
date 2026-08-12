@@ -1,0 +1,5 @@
+---
+# group_vars/webservers.yml
+# Specific app runtime configurations overriding global parameters if needed
+django_env: "production"
+max_connections: 100

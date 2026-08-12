@@ -1,0 +1,20 @@
+# SystemD Service Template for the Portfolio 3-Tier Python Backend Application
+[Unit]
+Description=Portfolio 3-Tier Python Backend Application
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/opt/portfolio_app
+ExecStart=/usr/bin/python3 app.py
+Restart=always
+
+# Injecting Environment Variables into the application process dynamically
+Environment=DB_HOST={{ hostvars[groups['tier_database'][0]]['ansible_default_ipv4'].address }}
+Environment=DB_USER={{ db_user }}
+Environment=DB_NAME={{ db_name }}
+Environment=DB_PASSWORD={{ vault_db_password }}
+Environment=APP_PORT={{ app_port }}
+
+[Install]
+WantedBy=multi-user.target

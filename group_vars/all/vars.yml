@@ -1,0 +1,9 @@
+# group_vars/all/vars.yml
+aws_region: "us-east-1"
+key_name: "3tier-projects" # Must exist in your AWS console account
+instance_type: "t3.micro"
+ami_id: "resolve:ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+app_port: 8080
+db_user: "dbadmin"
+db_name: "portfolio_db"

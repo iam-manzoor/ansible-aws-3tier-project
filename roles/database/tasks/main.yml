@@ -1,0 +1,57 @@
+---
+# roles/database/tasks/main.yml
+
+- name: Install MariaDB Database Server engine
+  ansible.builtin.dnf:
+    name: "{{ db_package }}"
+    state: present
+
+- name: Start Database service and enable on system boot
+  ansible.builtin.service:
+    name: "{{ db_service }}"
+    state: started
+    enabled: true
+
+- name: Deploy isolated enterprise network binding configuration
+  ansible.builtin.template:
+    src: server.cnf.j2
+    dest: /etc/my.cnf.d/server.cnf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart mariadb # Triggers the handler if the file changes
+
+- name: Flush handlers immediately to apply network bindings before creating users
+  ansible.builtin.meta: flush_handlers
+
+- name: Update root user password using encrypted Ansible Vault string
+  community.mysql.mysql_user: # Built-in wrapper module for SQL user updates
+    name: root
+    host: localhost
+    password: "{{ vault_db_password }}" # Safe encrypted secret string
+    login_user: root
+    login_password: "{{ vault_db_password }}"
+    check_implicit_admin: true
+    state: present
+
+- name: Create the internal application production schema database
+  community.mysql.mysql_db: # Built-in wrapper module for SQL database creation
+    name: "{{ db_name }}"
+    login_user: root
+    login_password: "{{ vault_db_password }}"
+    state: present
+
+- name: Create the application user account and grant cluster network permissions
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    host: "10.0.0.0/255.255.0.0" # Only allows connections from inside our private AWS VPC
+    password: "{{ vault_db_password }}"
+    login_user: root
+    login_password: "{{ vault_db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+
+- name: Install Python MySQL dependencies on database host
+  ansible.builtin.package:
+    name: python3-pymysql
+    state: present

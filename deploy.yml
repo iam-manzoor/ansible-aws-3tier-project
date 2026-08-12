@@ -1,0 +1,28 @@
+---
+- name: Phase 2 - Execute Production Server Fleet Configuration
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - common
+
+- name: Phase 2 - Configure Application Webserver Layer Cluster
+  hosts: tier_webserver
+  gather_facts: true
+  roles:
+    - webserver
+
+# deploy.yml (Append this block to your existing file)
+- name: Phase 2 - Configure Secure Database Management Layer
+  hosts: tier_database
+  gather_facts: true
+  roles:
+    - database
+
+
+
+- name: Phase 2 - Configure Public Facing Proxy Load Balancer
+  hosts: tier_loadbalancer
+  gather_facts: true
+  roles:
+    - loadbalancer

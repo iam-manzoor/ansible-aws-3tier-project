@@ -1,0 +1,69 @@
+---
+
+- name: Install Python3 and pip package manager
+  ansible.builtin.dnf:
+    name:
+      - python3
+      - python3-pip
+    state: present
+
+- name: Install database connector library via pip
+  ansible.builtin.pip:
+    name: PyMySQL
+    state: present
+
+- name: Create dedicated application deployment directory
+  ansible.builtin.file:
+    path: /opt/portfolio_app
+    state: directory
+    mode: '0755'
+
+- name: Deploy the lightweight Python web application script
+  ansible.builtin.copy:
+    dest: /opt/portfolio_app/app.py
+    mode: '0644'
+    content: |
+      import os
+      from http.server import SimpleHTTPRequestHandler, HTTPServer
+      import pymysql
+
+      class PortfolioHandler(SimpleHTTPRequestHandler):
+          def do_GET(self):
+              if self.path == '/':
+                  self.send_response(200)
+                  self.send_header('Content-type', 'text/html')
+                  self.end_headers()
+                  
+                  # Test connection to our secure database tier
+                  status = "Successfully Connected to Secure DB!"
+                  try:
+                      conn = pymysql.connect(
+                          host=os.getenv('DB_HOST'),
+                          user=os.getenv('DB_USER'),
+                          password=os.getenv('DB_PASSWORD'),
+                          database=os.getenv('DB_NAME'),
+                          connect_timeout=3
+                      )
+                      conn.close()
+                  except Exception as e:
+                      status = f"Database Connection Failed: {str(e)}"
+
+                  html = f"<h1>Hello from Portfolio App Server!</h1><p>Status: {status}</p>"
+                  self.wfile.write(bytes(html, "utf8"))
+
+      port = int(os.getenv('APP_PORT', 8080))
+      print(f"Running backend on port {port}...")
+      HTTPServer(('0.0.0.0', port), PortfolioHandler).serve_forever()
+
+- name: Deploy dynamic Systemd service manager file
+  ansible.builtin.template:
+    src: app.service.j2
+    dest: /etc/systemd/system/portfolio_app.service
+    mode: '0644'
+  notify: reload systemd and restart application
+
+- name: Ensure the application service is running and active
+  ansible.builtin.service:
+    name: portfolio_app
+    state: started
+    enabled: true

@@ -1,0 +1,5 @@
+---
+# group_vars/loadbalancers.yml
+# Nginx performance tuning configurations
+client_max_body_size: "10M"
+keepalive_timeout: 65
