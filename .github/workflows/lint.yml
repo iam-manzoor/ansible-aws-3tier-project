@@ -18,6 +18,8 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Create VVVVault Password File
+        run: echo "fake_password_for_linting" > .vault_pass
       - name: Install Ansible-Lint Utility
         run: |
           pip install ansible ansible-lint
