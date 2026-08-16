@@ -1,37 +1,3 @@
-ansible-aws-3tier-portfolio/
-├── .github/
-│   └── workflows/
-│       └── lint.yml
-├── group_vars/
-│   ├── all/
-│   │   ├── vars.yml
-│   │   └── vault.yml
-│   ├── webservers.yml
-│   └── loadbalancers.yml
-├── roles/
-│   ├── common/
-│   │   └── tasks/main.yml
-│   ├── database/
-│   │   ├── defaults/main.yml
-│   │   ├── handlers/main.yml
-│   │   ├── tasks/main.yml
-│   │   └── templates/server.cnf.j2
-│   ├── webserver/
-│   │   ├── handlers/main.yml
-│   │   ├── tasks/main.yml
-│   │   └── templates/app.service.j2
-│   └── loadbalancer/
-│       ├── handlers/main.yml
-│       ├── tasks/main.yml
-│       └── templates/nginx.conf.j2
-├── ansible.cfg
-├── production.aws_ec2.yml
-├── provision.yml
-├── deploy.yml
-├── destroy.yml
-├── .gitignore
-└── README.md
-
 ## Project Overview
 
 This repository contains an Ansible-driven reference implementation for deploying a secure, isolated 3-tier portfolio application on AWS. The playbooks and roles are organized to provision infrastructure (VPC, subnets, security groups, EC2), configure a small application fleet (load balancer, web servers, database), and perform a one-step teardown to stop billing.
