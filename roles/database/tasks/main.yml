@@ -20,6 +20,7 @@
     group: root
     mode: '0644'
   notify: restart mariadb # Triggers the handler if the file changes
+  
 
 - name: Flush handlers immediately to apply network bindings before creating users
   ansible.builtin.meta: flush_handlers

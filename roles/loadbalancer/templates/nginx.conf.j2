@@ -6,7 +6,7 @@ http {
     # Dynamically loop over all hosts discovered in the tier_webserver group
     upstream portfolio_backend {
         {% for host in groups['tier_webserver'] %}
-        server {{ hostvars[host]['ansible_default_ipv4'].address }}:{{ app_port }};
+        server {{ hostvars[host]['ansible_default_ipv4'].address | default('127.0.0.1') }}:{{ app_port }};
         {% endfor %}
     }
 

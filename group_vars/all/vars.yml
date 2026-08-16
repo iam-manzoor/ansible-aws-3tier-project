@@ -6,4 +6,4 @@ ami_id: "resolve:ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 
 app_port: 8080
 db_user: "dbadmin"
-db_name: "portfolio_db"
+db_name: "db"

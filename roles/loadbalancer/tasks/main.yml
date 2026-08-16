@@ -15,7 +15,7 @@
         owner: root
         group: root
         mode: '0644'
-      notify: reload nginx
+      notify: Reload nginx
 
     - name: Ensure Nginx is started and enabled to boot automatically
       ansible.builtin.service:

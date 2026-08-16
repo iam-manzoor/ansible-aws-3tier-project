@@ -60,7 +60,7 @@
     src: app.service.j2
     dest: /etc/systemd/system/portfolio_app.service
     mode: '0644'
-  notify: reload systemd and restart application
+  notify: Reload systemd and restart application
 
 - name: Ensure the application service is running and active
   ansible.builtin.service:

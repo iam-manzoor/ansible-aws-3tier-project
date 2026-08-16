@@ -6,11 +6,16 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory=/opt/portfolio_app
-ExecStart=/usr/bin/python3 app.py
+ExecStart=/usr/bin/python3 /opt/portfolio_app/app.py
 Restart=always
 
 # Injecting Environment Variables into the application process dynamically
-Environment=DB_HOST={{ hostvars[groups['tier_database'][0]]['ansible_default_ipv4'].address }}
+{% if groups['tier_database'] is defined and (groups['tier_database'] | length) > 0 %}
+{% set db_host = hostvars[groups['tier_database'][0]]['ansible_default_ipv4'].address | default('127.0.0.1') %}
+{% else %}
+{% set db_host = '127.0.0.1' %}
+{% endif %}
+Environment=DB_HOST={{ db_host }}
 Environment=DB_USER={{ db_user }}
 Environment=DB_NAME={{ db_name }}
 Environment=DB_PASSWORD={{ vault_db_password }}
