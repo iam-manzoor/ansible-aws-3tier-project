@@ -3,12 +3,12 @@
 
 - name: Install MariaDB Database Server engine
   ansible.builtin.dnf:
-    name: "{{ db_package }}"
+    name: "{{ database_package }}"
     state: present
 
 - name: Start Database service and enable on system boot
   ansible.builtin.service:
-    name: "{{ db_service }}"
+    name: "{{ database_service }}"
     state: started
     enabled: true
 
@@ -19,8 +19,7 @@
     owner: root
     group: root
     mode: '0644'
-  notify: restart mariadb # Triggers the handler if the file changes
-  
+  notify: Restart mariadb # Triggers the handler if the file changes
 
 - name: Flush handlers immediately to apply network bindings before creating users
   ansible.builtin.meta: flush_handlers

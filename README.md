@@ -41,4 +41,4 @@ ansible-aws-3tier-portfolio/
 ├── deploy.yml                # Playbook 2: Master configuration playbook that triggers roles
 ├── destroy.yml               # Playbook 3: 1-Click teardown script to keep AWS costs at $0
 ├── .gitignore                # Protects your local vault password files from being pushed
-└── README.md    
+└── README.md

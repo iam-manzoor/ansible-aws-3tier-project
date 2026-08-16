@@ -33,7 +33,6 @@
                   self.send_response(200)
                   self.send_header('Content-type', 'text/html')
                   self.end_headers()
-                  
                   # Test connection to our secure database tier
                   status = "Successfully Connected to Secure DB!"
                   try:

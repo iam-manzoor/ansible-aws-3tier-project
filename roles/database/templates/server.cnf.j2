@@ -7,4 +7,4 @@ pid-file=/run/mariadb/mariadb.pid
 
 # Secure Configuration: Only listen on the internal AWS VPC network
 bind-address = {{ ansible_default_ipv4.address | default('127.0.0.1') }}
-port = {{ db_port | default(3306) }}
+port = {{ database_port | default(3306) }}
