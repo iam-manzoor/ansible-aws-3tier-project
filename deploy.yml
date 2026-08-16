@@ -19,8 +19,6 @@
   roles:
     - database
 
-
-
 - name: Phase 2 - Configure Public Facing Proxy Load Balancer
   hosts: tier_loadbalancer
   gather_facts: true

@@ -1,5 +1,5 @@
 # Handler for reloading systemd and restarting the application
-- name: reload systemd and restart application
+- name: Reload systemd and restart application
   ansible.builtin.systemd:
     daemon_reload: true
     name: portfolio_app

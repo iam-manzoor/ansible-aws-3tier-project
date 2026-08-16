@@ -1,6 +1,6 @@
 ---
 # roles/database/handlers/main.yml
-- name: restart mariadb
+- name: Restart mariadb
   ansible.builtin.service:
     name: "{{ db_service }}"
     state: restarted

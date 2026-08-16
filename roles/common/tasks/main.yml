@@ -2,7 +2,7 @@
 - name: Update all system packages to the latest version
   ansible.builtin.apt:
     name: "*"
-    state: latest
+    state: latest # noqa: package-latest
   when: ansible_facts['os_family'] == "Debian"
 
 - name: Install core system utility dependencies via loops
@@ -16,7 +16,7 @@
     - tar
     - vim
     - htop
-  
+
 - name: Set a structured production system banner
   ansible.builtin.copy:
     dest: /etc/motd

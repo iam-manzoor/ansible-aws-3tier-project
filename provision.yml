@@ -147,7 +147,7 @@
 
     - name: Deploy Database Server Tier via Iteration Loops
       amazon.aws.ec2_instance:
-        name: "{{ item.name }}"
+        name: "db"
         region: "{{ aws_region }}"
         image_id: "{{ resolved_ami_id }}"
         instance_type: "{{ instance_type }}"
@@ -157,8 +157,6 @@
         network:
           assign_public_ip: false # Blocks public IP assignment completely
         tags:
-          Tier: "{{ item.tier }}"
+          Tier: "database"
           Environment: Production
         state: running
-      loop:
-        - { name: "portfolio-db", tier: "database" }
